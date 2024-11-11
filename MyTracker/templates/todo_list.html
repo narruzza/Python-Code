@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .todo-list {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .todo-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #ccc;
+            padding: 10px 0;
+        }
+        .todo-item img {
+            max-width: 50px;
+            max-height: 50px;
+            margin-right: 10px;
+        }
+        .todo-item input[type="text"] {
+            flex: 1;
+            margin-right: 10px;
+        }
+        .todo-item input[type="datetime-local"] {
+            margin-right: 10px;
+        }
+        .todo-item button {
+            margin-left: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="todo-list">
+        <h1>Todo List</h1>
+        <div class="todo-item" id="tutorial-item">
+            <img src="knee_surgery.png" alt="Knee Surgery">
+            <input type="text" value="Knee Surgery Tomorrow">
+            <input type="datetime-local" value="2023-10-10T10:00">
+            <button onclick="deleteItem('tutorial-item')">Delete</button>
+            <button onclick="saveItem(this)">Save</button>
+        </div>
+        <div id="todo-items"></div>
+        <div class="todo-item">
+            <input type="text" id="new-task" placeholder="New task">
+            <input type="datetime-local" id="new-date-time">
+            <input type="file" id="new-image">
+            <button onclick="addItem()">Add</button>
+        </div>
+    </div>
+
+    <script>
+        function addItem() {
+            const task = document.getElementById('new-task').value;
+            const dateTime = document.getElementById('new-date-time').value;
+            const image = document.getElementById('new-image').files[0];
+
+            if (task && dateTime && image) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const todoItems = document.getElementById('todo-items');
+                    const newItem = document.createElement('div');
+                    newItem.className = 'todo-item';
+                    newItem.innerHTML = `
+                        <img src="${e.target.result}" alt="Task Image">
+                        <input type="text" value="${task}">
+                        <input type="datetime-local" value="${dateTime}">
+                        <button onclick="deleteItem(this)">Delete</button>
+                        <button onclick="saveItem(this)">Save</button>
+                    `;
+                    todoItems.appendChild(newItem);
+                };
+                reader.readAsDataURL(image);
+            }
+        }
+
+        function deleteItem(element) {
+            element.parentElement.remove();
+        }
+
+        function saveItem(element) {
+            const todoItem = element.parentElement;
+            const taskInput = todoItem.querySelector('input[type="text"]');
+            const dateTimeInput = todoItem.querySelector('input[type="datetime-local"]');
+            // Save the updated values (e.g., send to server or update local storage)
+            console.log('Task:', taskInput.value);
+            console.log('Date and Time:', dateTimeInput.value);
+        }
+    </script>
+</body>
+</html>
