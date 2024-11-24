@@ -21,8 +21,6 @@ db_session = Session()
 def index():
     return render_template('index.html')
 
-
-
 # Route for login page
 @app.route('/login', methods=["GET", "POST"])
 def login():
@@ -40,44 +38,26 @@ def login():
             flash("Invalid username or password", "danger")
     return render_template('login.html')
 
-
 # Route for signup page
 @app.route('/signup', methods=["GET", "POST"])
 def signup():
     return render_template('signup.html')
 
-# @app.route('/todo_list')
-# def todo_list():
-#     if "user_id" not in session:
-#         flash("Please login to view that page", "warning")
-#         return redirect(url_for("login"))
-#     return render_template("todo_list.html", user_id=session["user_id"], username=session["username"])
+@app.route('/todo_list')
+def todo_list():
+    if "user_id" not in session:
+        flash("Please login to view that page", "warning")
+        return redirect(url_for("login"))
+    # Retrieve the user's tasks from the database
+    user_id = session["user_id"]
+    user = db_session.query(User).get(user_id)
+    return render_template("todo_list.html", user_id=session["user_id"], username=session["username"])
 
-
-# # Google OAuth login route
-# @app.route("/google_login")
-# def google_login():
-#     if not google.authorized:
-#         return redirect(url_for("google.login"))
-
-#     resp = google.get("/plus/v1/people/me")
-#     assert resp.ok, resp.text
-#     email = resp.json()["emails"][0]["value"]
-
-#     # Check if user already exists
-#     user = db_session.query(User).filter_by(username=email).first()
-#     if not user:
-#         # Create a new user if it doesn't exist
-#         new_user = User(username=email, password=generate_password_hash("default_password"))
-#         db_session.add(new_user)
-#         db_session.commit()
-
-#     # Log in the user
-#     session["user_id"] = user.id if user else new_user.id
-#     session["username"] = email
-#     flash("Google login successful!", "info")
-#     return redirect(url_for("todo_list"))
-
+@app.route('/logout')
+def logout():
+    session.pop("user_id", None)
+    flash("You have been logged out.", "info")
+    return redirect(url_for('login'))
 
 # Run the app
 if __name__ == '__main__':
