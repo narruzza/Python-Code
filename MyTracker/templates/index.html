@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MyTracker</title>
+        <!-- Bootstrap CSS -->
+    <link
+
+href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.cs
+s"
+        rel="stylesheet"
+    />
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -35,15 +42,11 @@
 </head>
 <body>
     <div class="container">
-        <img src="logo.jpeg" alt="MyTracker Logo" class="logo" style="width: 200px; height: 200px;">
+        <img src="logo.png" alt="MyTracker Logo" class="logo" />
         <h1>MyTracker</h1>
         <div class="buttons">
-            <a href=""{{ url_for('login') }}>
-                <button>Login</button>
-            </a>
-            <a href="{{ url_for('signup') }}">
-                <button>Sign Up</button>
-            </a>
+            <a href="{{ url_for('login') }}"> <button class="btn btn-primary">Login</button> </a> 
+            <a href="{{ url_for('signup') }}"> <button class="btn btn-primary">Signup</button> </a> 
         </div>
     </div>
 </body>
