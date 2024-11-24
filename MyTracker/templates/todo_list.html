@@ -184,6 +184,27 @@
                 <input id="search-bar" type="text" placeholder="Search tasks..." oninput="filterTasks()" />
             </div>
             <ul id="task-list" class="todo-list"></ul>
+            <!-- Form to Add a New To-Do -->
+            <form action="{{ url_for('add_todo') }}" method="POST">
+                <input type="text" name="task" placeholder="New To-Do" required />
+                <button type="submit">Add</button>
+            </form>
+            <!-- Display To-Do List -->
+            <ul>
+                {% for task in tasks %}
+                <li>
+                    {{ task.description }} {% if task.completed %}
+                    <strong>(Completed)</strong>
+                    {% else %}
+                    <strong>(Pending)</strong>
+                    {% endif %}
+                    <!-- Delete Button -->
+                    <form action="{{ url_for('delete_todo', todo_id=task.id) }}" method="POST" style="display:inline;">
+                        <button type="submit">Delete</button>
+                    </form>
+                </li>
+                {% endfor %}
+            </ul>
         </div>
         <div id="timetable" class="tab-content">
             <h3>Upcoming To-Do Items</h3>
