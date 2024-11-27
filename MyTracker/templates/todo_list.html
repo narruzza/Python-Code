@@ -160,13 +160,18 @@
     <div id="container">
         <div class="tabs">
             <div class="tab active" onclick="switchTab('todo')">To-Do List</div>
-            <div class="tab" onclick="switchTab('timetable')">Timetable</div>
+            <div class="tab" onclick="switchTab('upcoming')">Upcoming</div>
         </div>
         <div id="todo" class="tab-content active">
-            <form class="todo-form" onsubmit="addTask(event)">
-                <input id="task-name" type="text" placeholder="Task Name" required />
-                <input id="task-date" type="date" required />
-                <select id="task-category" required>
+            <form class="todo-form" action="{{ url_for('add_todo') }}" method="POST">
+                <input id="task-name" name="task-name" type="text" placeholder="Task Name" required />
+                <input id="task-date" name="task-date" type="date" required />
+                <select id="task-category" name="task-category" required>
+                    <option value="">Select Category</option>
+                    <option value="Work">Work</option>
+                    <option value="Personal">Personal</option>
+                    <option value="School">School</option>
+                </select>
                     <option value="">Select Category</option>
                     <option value="Work">Work</option>
                     <option value="Personal">Personal</option>
@@ -183,102 +188,49 @@
                 </select>
                 <input id="search-bar" type="text" placeholder="Search tasks..." oninput="filterTasks()" />
             </div>
-            <ul id="task-list" class="todo-list"></ul>
-            <!-- Form to Add a New To-Do -->
-            <form action="{{ url_for('add_todo') }}" method="POST">
-                <input type="text" name="task" placeholder="New To-Do" required />
-                <button type="submit">Add</button>
-            </form>
-            <!-- Display To-Do List -->
-            <ul>
+            <ul id="task-list" class="todo-list">
                 {% for task in tasks %}
                 <li>
-                    {{ task.description }} {% if task.completed %}
-                    <strong>(Completed)</strong>
+                    <span>{{ task.task }} {% if task.completed %}
+                    <strong class="text-green-500">(Completed)</strong>
                     {% else %}
-                    <strong>(Pending)</strong>
-                    {% endif %}
-                    <!-- Delete Button -->
-                    <form action="{{ url_for('delete_todo', todo_id=task.id) }}" method="POST" style="display:inline;">
-                        <button type="submit">Delete</button>
+                    <strong class="text-yellow-500">(Pending)</strong>
+                    {% endif %}</span>
+                    <form action="{{ url_for('delete_todo', todo_id=task.id) }}" method="POST">
+                        <button type="submit" class="delete">Delete</button>
                     </form>
                 </li>
                 {% endfor %}
             </ul>
         </div>
-        <div id="timetable" class="tab-content">
+        <div id="upcoming" class="tab-content">
             <h3>Upcoming To-Do Items</h3>
-            <ul id="upcoming-list" class="todo-list"></ul>
+            <ul id="upcoming-list" class="todo-list">
+                {% for task in upcoming_tasks %}
+                <li>
+                    <span>{{ task.task }} - {{ task.due_date }}</span>
+                </li>
+                {% endfor %}
+            </ul>
         </div>
     </div>
     <script>
-        const taskList = document.getElementById('task-list');
-        const upcomingList = document.getElementById('upcoming-list');
-        const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
-
-        function addTask(event) {
-            event.preventDefault();
-            const name = document.getElementById('task-name').value;
-            const date = document.getElementById('task-date').value;
-            const category = document.getElementById('task-category').value;
-            const task = { name, date, category };
-            tasks.push(task);
-            saveTasks();
-            renderTasks();
-            document.querySelector('.todo-form').reset();
-        }
-
-        function deleteTask(index) {
-            tasks.splice(index, 1);
-            saveTasks();
-            renderTasks();
-        }
-
-        function saveTasks() {
-            localStorage.setItem('tasks', JSON.stringify(tasks));
-        }
-
-        function renderTasks() {
-            taskList.innerHTML = '';
-            upcomingList.innerHTML = '';
-            const today = new Date().toISOString().split('T')[0];
-            tasks.forEach((task, index) => {
-                const li = document.createElement('li');
-                li.innerHTML = `
-                    <div>
-                        <strong>${task.name}</strong> - ${task.category} - ${task.date}
-                    </div>
-                    <button class="delete" onclick="deleteTask(${index})">Delete</button>
-                `;
-                taskList.appendChild(li);
-                if (task.date >= today) upcomingList.appendChild(li.cloneNode(true));
-            });
-        }
-
-        function filterTasks() {
-            const query = document.getElementById('search-bar').value.toLowerCase();
-            Array.from(taskList.children).forEach(li => {
-                const text = li.textContent.toLowerCase();
-                li.style.display = text.includes(query) ? '' : 'none';
-            });
-        }
-
-        function filterByCategory() {
-            const category = document.getElementById('filter-category').value;
-            Array.from(taskList.children).forEach(li => {
-                const taskCategory = li.textContent.includes(category) || category === '';
-                li.style.display = taskCategory ? '' : 'none';
-            });
-        }
-
         function switchTab(tabId) {
-            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-            document.querySelector(`.tab[onclick="switchTab('${tabId}')"]`).classList.add('active');
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
             document.getElementById(tabId).classList.add('active');
+            document.querySelector(`.tab[onclick="switchTab('${tabId}')"]`).classList.add('active');
         }
-
-        renderTasks();
+        function filterByCategory() {
+            // Implement category filtering logic here
+        }
+        function filterTasks() {
+            // Implement task filtering logic here
+        }
     </script>
 </body>
 </html>

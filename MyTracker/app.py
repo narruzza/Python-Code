@@ -69,7 +69,8 @@ def todo_list():
     # Retrieve the user's tasks from the database
     user_id = session["user_id"]
     user = db_session.query(User).get(user_id)
-    return render_template("todo_list.html", user_id=session["user_id"], username=session["username"])
+    tasks = db_session.query(ToDo).filter_by(user_id=user_id).all()
+    return render_template("todo_list.html", user_id=session["user_id"], username=session["username"], tasks=tasks)
 
 @app.route('/logout')
 def logout():
@@ -86,15 +87,15 @@ def add_todo():
         return redirect(url_for('login'))
     
     # Retrieve task data from the form
-    task_description = request.form.get("task")
+    task_description = request.form.get("task-name")
     user_id = session["user_id"]
 
     # Create a new Task object and save it to the database
-    new_task = ToDo(description=task_description, user_id=user_id)
+    new_task = ToDo(task=task_description, user_id=user_id)
     db_session.add(new_task)
     db_session.commit()
     flash("To-Do added successfully!", "success")
-    return redirect(url_for('dashboard'))
+    return redirect(url_for('todo_list'))
 
 @app.route('/delete_todo/<int:todo_id>', methods=["POST"])
 def delete_todo(todo_id):
@@ -113,7 +114,7 @@ def delete_todo(todo_id):
         flash("To-Do deleted successfully!", "success")
     else:
         flash("To-Do not found or access denied.", "danger")
-    return redirect(url_for('dashboard'))
+    return redirect(url_for('todo_list'))
 
 # Run the app
 if __name__ == '__main__':
