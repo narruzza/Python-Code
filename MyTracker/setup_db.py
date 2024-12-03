@@ -21,11 +21,13 @@ class ToDo(Base):
     __tablename__ = 'todo'
     id = Column(Integer, primary_key=True)
     task = Column(String, nullable=False)
-    done = Column(Boolean, default=False)
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
     user = relationship('User', back_populates='todos')
+    date = Column(String, nullable=False)
+    category = Column(String, nullable=False)
 
 # Database setup
 engine = create_engine('sqlite:///todo.db')
 Base.metadata.create_all(engine)
 print("Database and tables created successfully.")
+# update the app.py addtodo route to include the date field

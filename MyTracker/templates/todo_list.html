@@ -164,23 +164,19 @@
         </div>
         <div id="todo" class="tab-content active">
             <form class="todo-form" action="{{ url_for('add_todo') }}" method="POST">
-                <input id="task-name" name="task-name" type="text" placeholder="Task Name" required />
-                <input id="task-date" name="task-date" type="date" required />
-                <select id="task-category" name="task-category" required>
+                <input id="task" name="task" type="text" placeholder="Task Name" required />
+                <input id="date" name="date" type="date" required />
+                <select id="category" name="category" required>
                     <option value="">Select Category</option>
                     <option value="Work">Work</option>
                     <option value="Personal">Personal</option>
                     <option value="School">School</option>
                 </select>
-                    <option value="">Select Category</option>
-                    <option value="Work">Work</option>
-                    <option value="Personal">Personal</option>
-                    <option value="School">School</option>
                 </select>
                 <button type="submit">Add Task</button>
             </form>
             <div class="filter-search">
-                <select id="filter-category" onchange="filterByCategory()">
+                <select id="category" onchange="filterByCategory()">
                     <option value="">All Categories</option>
                     <option value="Work">Work</option>
                     <option value="Personal">Personal</option>
@@ -191,7 +187,7 @@
             <ul id="task-list" class="todo-list">
                 {% for task in tasks %}
                 <li>
-                    <span>{{ task.task }} {% if task.completed %}
+                    <span>{{ task.task }} - {{ task.date }} - {{ task.category }} {% if task.completed %}
                     <strong class="text-green-500">(Completed)</strong>
                     {% else %}
                     <strong class="text-yellow-500">(Pending)</strong>
@@ -211,6 +207,8 @@
                     <span>{{ task.task }} - {{ task.due_date }}</span>
                 </li>
                 {% endfor %}
+            <li>
+            </li>
             </ul>
         </div>
     </div>

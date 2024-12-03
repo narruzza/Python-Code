@@ -87,11 +87,13 @@ def add_todo():
         return redirect(url_for('login'))
     
     # Retrieve task data from the form
-    task_description = request.form.get("task-name")
+    task_description = request.form.get("task")
+    task_date = request.form.get("date")
+    task_category = request.form.get("category")
     user_id = session["user_id"]
 
     # Create a new Task object and save it to the database
-    new_task = ToDo(task=task_description, user_id=user_id)
+    new_task = ToDo(task=task_description, date=task_date, category=task_category, user_id=user_id)
     db_session.add(new_task)
     db_session.commit()
     flash("To-Do added successfully!", "success")
